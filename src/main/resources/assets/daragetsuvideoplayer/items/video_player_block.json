@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "daragetsuvideoplayer:block/video_player_block"
+  }
+}
