@@ -13,6 +13,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+
 import java.awt.Color;
 import java.io.File;
 public class VideoPlayerBlockEntityRenderer implements BlockEntityRenderer<VideoPlayerBlockEntity>{
@@ -35,8 +37,25 @@ public class VideoPlayerBlockEntityRenderer implements BlockEntityRenderer<Video
         block.frames++;
         VertexConsumer vc = bufferSource.getBuffer(RenderType.debugQuads());
         stack.pushPose();
-        stack.translate(0D, 1D, 0.5D);
-        stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+        Direction facing = block.getBlockState().getValue(VideoPlayerBlock.FACING);
+        if(facing.equals(Direction.NORTH)){
+            stack.translate(0D, 1D, 0.5D);
+            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-180.0F));
+        }
+        if(facing.equals(Direction.SOUTH)){
+            stack.translate(0D, 1D, 0.5D);
+            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+        }
+        if(facing.equals(Direction.EAST)){
+            stack.translate(0.5D, 1D, 0D);
+            stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270.0F));
+            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+        }
+        if(facing.equals(Direction.WEST)){
+            stack.translate(0.5D, 1D, 0D);
+            stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90.0F));
+            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+        }
         Matrix4f m = stack.last().pose();
         try {
             File main = Minecraft.getInstance().gameDirectory;
