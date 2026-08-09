@@ -13,7 +13,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -22,6 +21,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 public class DataLoader extends SimpleJsonResourceReloadListener{
     private static final Gson GSON = new GsonBuilder().create();
     public static Map<String, ArrayList<String>> files = new HashMap<>();
+    private static Map<ResourceLocation, JsonElement> object = new HashMap<>();
 
     public DataLoader() {
         super(GSON, "videos");
@@ -29,10 +29,13 @@ public class DataLoader extends SimpleJsonResourceReloadListener{
 
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler) {
-        for (Map.Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
+        DataLoader.object = object;
+    }
+
+    public static void Load(File main){
+        for (Map.Entry<ResourceLocation, JsonElement> entry : DataLoader.object.entrySet()) {
             JsonElement element = entry.getValue();
             Data data = GSON.fromJson(element, Data.class);
-            File main = Minecraft.getInstance().gameDirectory;
             File folder = new File(main, "frames");
             File f = new File(folder, data.name());
             if(!f.exists()){

@@ -8,6 +8,7 @@ import com.daragetsu.daragetsuvideoplayer.items.ModItems;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -57,6 +58,7 @@ public class DaragetsuVideoPlayer
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
+        DataLoader.Load(event.getServer().getWorldPath(LevelResource.ROOT).toFile());
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -76,7 +78,6 @@ public class DaragetsuVideoPlayer
     }
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public class Handler {
-
         @SubscribeEvent
         public static void addListeners(AddReloadListenerEvent event) {
             event.addListener(new DataLoader());

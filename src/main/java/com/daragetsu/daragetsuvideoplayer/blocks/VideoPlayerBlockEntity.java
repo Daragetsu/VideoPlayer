@@ -8,13 +8,13 @@ import javax.imageio.ImageIO;
 
 import com.daragetsu.daragetsuvideoplayer.data.DataLoader;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.LevelResource;
 
 public class VideoPlayerBlockEntity extends BlockEntity{
     public int imageWidth = 0;
@@ -43,7 +43,7 @@ public class VideoPlayerBlockEntity extends BlockEntity{
         }
         blockEntity.frames++;
         try {
-            File main = Minecraft.getInstance().gameDirectory;
+            File main = level.getServer().getWorldPath(LevelResource.ROOT).toFile();
             File folf = new File(main, "frames");
             File folder = new File(folf, blockEntity.runnables.get(blockEntity.running));
             String name = DataLoader.files.get(blockEntity.runnables.get(blockEntity.running)).get(blockEntity.frames);
