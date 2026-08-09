@@ -23,26 +23,26 @@ public class VideoPlayerBlockEntityRenderer implements BlockEntityRenderer<Video
         stack.pushPose();
         Direction facing = block.getBlockState().getValue(VideoPlayerBlock.FACING);
         if(facing.equals(Direction.NORTH)){
-            stack.translate(1D, 1D, 0D);
+            stack.translate(1D, 1D, 0.5D);
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
             stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180.0F));
         }
         if(facing.equals(Direction.SOUTH)){
-            stack.translate(0D, 1D, 0D);
+            stack.translate(0D, 1D, 0.5D);
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-180.0F));
         }
         if(facing.equals(Direction.EAST)){
-            stack.translate(0D, 1D, 1D);
+            stack.translate(0.5D, 1D, 1D);
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
             stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270.0F));
         }
         if(facing.equals(Direction.WEST)){
-            stack.translate(0D, 1D, 0D);
+            stack.translate(0.5D, 1D, 0D);
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
             stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90.0F));
         }
         if(facing.equals(Direction.UP)){
-            stack.translate(0D, 1D, 0D);
+            stack.translate(0D, 1D, 0.5D);
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90.0F));
         }
         Matrix4f m = stack.last().pose();

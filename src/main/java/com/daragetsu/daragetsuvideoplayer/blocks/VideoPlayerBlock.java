@@ -20,6 +20,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
@@ -66,11 +68,24 @@ public class VideoPlayerBlock extends BaseEntityBlock{
         if(level.isClientSide)return InteractionResult.SUCCESS;
         if(DataLoader.files.isEmpty())return InteractionResult.PASS;
         VideoPlayerBlockEntity blockEntity = (VideoPlayerBlockEntity)level.getBlockEntity(pos);
+        ItemStack stack = player.getMainHandItem();
+        String toChangeTo = "";
+        if(stack.is(Items.STICK)){
+            if(stack.hasCustomHoverName()){
+                toChangeTo = stack.getHoverName().getString();
+            }
+        }
         if(!blockEntity.runnables.isEmpty()){
-            if(blockEntity.running>=blockEntity.runnables.size()-1){
-                blockEntity.running = 0;
+            if(toChangeTo.isEmpty() && !blockEntity.runnables.contains(toChangeTo)){
+                if(blockEntity.running>=blockEntity.runnables.size()-1){
+                    blockEntity.running = 0;
+                }else{
+                    blockEntity.running++;
+                }
+                blockEntity.frames = 0;
             }else{
-                blockEntity.running++;
+                blockEntity.running = blockEntity.runnables.indexOf(toChangeTo);
+                blockEntity.frames = 0;
             }
         }
         player.sendSystemMessage(Component.literal("Switched to: "+blockEntity.runnables.get(blockEntity.running)));
