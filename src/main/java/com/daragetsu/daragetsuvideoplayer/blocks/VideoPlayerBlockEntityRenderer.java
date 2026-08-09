@@ -42,8 +42,12 @@ public class VideoPlayerBlockEntityRenderer implements BlockEntityRenderer<Video
             stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90.0F));
         }
         if(facing.equals(Direction.UP)){
-            stack.translate(0D, 1D, 0.5D);
+            stack.translate(0D, 0.5D, 0D);
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90.0F));
+        }
+        if(facing.equals(Direction.DOWN)){
+            stack.translate(0D, 0.5D, 1D);
+            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-90.0F));
         }
         Matrix4f m = stack.last().pose();
         for (int x = 0; x < block.imageWidth; x++) {

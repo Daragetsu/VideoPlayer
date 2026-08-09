@@ -21,6 +21,10 @@
         },
         "facing=up": {
             "model": "daragetsuvideoplayer:block/video_player_block",
+            "x": -90
+        },
+        "facing=down": {
+            "model": "daragetsuvideoplayer:block/video_player_block",
             "x": 90
         }
     }

@@ -123,6 +123,16 @@ public class VideoPlayerBlock extends BaseEntityBlock{
                 0, 
                 0, 
                 16, 
+                8, 
+                16
+            );
+        }
+        if(facing.equals(Direction.DOWN)){
+            shape = Block.box(
+                0, 
+                8, 
+                0, 
+                16, 
                 16, 
                 16
             );
