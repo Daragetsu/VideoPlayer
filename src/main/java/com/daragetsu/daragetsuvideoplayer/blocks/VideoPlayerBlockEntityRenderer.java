@@ -51,7 +51,7 @@ public class VideoPlayerBlockEntityRenderer implements BlockEntityRenderer<Video
             stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270.0F));
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
         }
-        if(facing.equals(Direction.WEST)){
+        if(facing.equals(Direction.WEST)){//TODO: fix
             stack.translate(0.5D, 1D, 0D);
             stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90.0F));
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
