@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "redstone",
+  "key": {
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "L": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "E": {
+      "item": "minecraft:end_stone"
+    }
+  },
+  "pattern": [
+    "ERE",
+    "RLR",
+    "ERE"
+  ],
+  "result": {
+    "item": "daragetsuvideoplayer:video_player_block"
+  },
+  "show_notification": true
+}

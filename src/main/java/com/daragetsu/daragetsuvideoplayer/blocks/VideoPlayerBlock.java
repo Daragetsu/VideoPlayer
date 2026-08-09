@@ -17,12 +17,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 
@@ -59,7 +62,72 @@ public class VideoPlayerBlock extends BaseEntityBlock{
         return new VideoPlayerBlockEntity(p_153215_, p_153216_);
     }
     public RenderShape getRenderShape(BlockState p_49232_) {
-        return RenderShape.INVISIBLE;
+        return RenderShape.MODEL;
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_,
+            CollisionContext p_60558_) {
+        Direction facing = p_60555_.getValue(VideoPlayerBlock.FACING);
+        VoxelShape shape = Block.box(
+            0, 
+            0, 
+            0, 
+            16, 
+            16, 
+            16
+        );
+        if(facing.equals(Direction.NORTH)){
+            shape = Block.box(
+                0, 
+                0, 
+                8, 
+                16, 
+                16, 
+                16
+            );
+        }
+        if(facing.equals(Direction.SOUTH)){
+            shape = Block.box(
+                0, 
+                0, 
+                0, 
+                16, 
+                16, 
+                8
+            );
+        }
+        if(facing.equals(Direction.EAST)){
+            shape = Block.box(
+                0, 
+                0, 
+                0, 
+                8, 
+                16, 
+                16
+            );
+        }
+        if(facing.equals(Direction.WEST)){
+            shape = Block.box(
+                8, 
+                0, 
+                0, 
+                16, 
+                16, 
+                16
+            );
+        }
+        if(facing.equals(Direction.UP)){
+            shape = Block.box(
+                0, 
+                0, 
+                0, 
+                16, 
+                16, 
+                16
+            );
+        }
+        return shape;
     }
 
     @Override

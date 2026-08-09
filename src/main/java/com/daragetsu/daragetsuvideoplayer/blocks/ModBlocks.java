@@ -13,7 +13,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, DaragetsuVideoPlayer.MOD_ID);
 
-    public static final RegistryObject<VideoPlayerBlock> VIDEO_PLAYER_BLOCK = BLOCKS.register("video_player_block", ()->new VideoPlayerBlock(BlockBehaviour.Properties.copy(Blocks.DIRT)));
+    public static final RegistryObject<VideoPlayerBlock> VIDEO_PLAYER_BLOCK = BLOCKS.register("video_player_block", ()->new VideoPlayerBlock(BlockBehaviour.Properties.copy(Blocks.END_STONE).noOcclusion()));
 
     public static void register(IEventBus eventBus){
         BLOCKS.register(eventBus);
