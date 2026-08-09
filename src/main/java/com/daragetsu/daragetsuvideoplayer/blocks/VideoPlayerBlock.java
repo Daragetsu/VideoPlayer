@@ -2,6 +2,8 @@ package com.daragetsu.daragetsuvideoplayer.blocks;
 
 import javax.annotation.Nullable;
 
+import com.daragetsu.daragetsuvideoplayer.data.DataLoader;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -61,7 +63,8 @@ public class VideoPlayerBlock extends BaseEntityBlock{
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult result) {
-        if(!level.isClientSide)return InteractionResult.SUCCESS;
+        if(level.isClientSide)return InteractionResult.SUCCESS;
+        if(DataLoader.files.isEmpty())return InteractionResult.PASS;
         VideoPlayerBlockEntity blockEntity = (VideoPlayerBlockEntity)level.getBlockEntity(pos);
         if(!blockEntity.runnables.isEmpty()){
             if(blockEntity.running>=blockEntity.runnables.size()-1){

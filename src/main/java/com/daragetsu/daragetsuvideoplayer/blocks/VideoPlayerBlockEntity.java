@@ -1,26 +1,67 @@
 package com.daragetsu.daragetsuvideoplayer.blocks;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+
+import com.daragetsu.daragetsuvideoplayer.data.DataLoader;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class VideoPlayerBlockEntity extends BlockEntity{
-    public int imageWidth = 1;
-    public int imageHeight = 1;
+    public int imageWidth = 0;
+    public int imageHeight = 0;
     public BufferedImage image;
     public int frames = 0;
     public int running = 0;
     public ArrayList<String> runnables = new ArrayList<>();
+    public int[][] pixels = new int[64][64];
     public VideoPlayerBlockEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(ModBlockEntities.VIDEO_PLAYER_BLOCK_ENTITY.get(), p_155229_, p_155230_);
     }
     
     public static void tick(Level level, BlockPos pos, BlockState state, VideoPlayerBlockEntity blockEntity) {
+        if(level.isClientSide())return;
+        if(DataLoader.files.isEmpty())return;
+        if(blockEntity.runnables.isEmpty()){
+            for(String key : DataLoader.files.keySet()){
+                blockEntity.runnables.add(key);
+            }
+        }
+        if(blockEntity.runnables.isEmpty())return;
+        if(DataLoader.files.get(blockEntity.runnables.get(blockEntity.running))==null)return;
+        if(blockEntity.frames>=DataLoader.files.get(blockEntity.runnables.get(blockEntity.running)).size()-1){
+            blockEntity.frames = 0;
+        }
+        blockEntity.frames++;
+        try {
+            File main = Minecraft.getInstance().gameDirectory;
+            File folf = new File(main, "frames");
+            File folder = new File(folf, blockEntity.runnables.get(blockEntity.running));
+            String name = DataLoader.files.get(blockEntity.runnables.get(blockEntity.running)).get(blockEntity.frames);
+            File file = new File(folder, name);
+            blockEntity.image = ImageIO.read(file);
+            blockEntity.imageWidth = blockEntity.image.getWidth();
+            blockEntity.imageHeight = blockEntity.image.getHeight();
+            blockEntity.pixels = new int[blockEntity.image.getWidth()][blockEntity.image.getHeight()];
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for(int x = 0; x < blockEntity.imageWidth; x++){
+            for(int y = 0; y < blockEntity.imageHeight; y++){
+                blockEntity.pixels[x][y] = blockEntity.image.getRGB(x, y);
+            }
+        }
+        blockEntity.setChanged();
+        level.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
     }
 
     @Override
@@ -29,7 +70,12 @@ public class VideoPlayerBlockEntity extends BlockEntity{
         tag.putInt("imageWidth", this.imageWidth);
         tag.putInt("imageHeight", this.imageHeight);
         tag.putInt("frames", this.frames);
-        tag.putInt("running", running);
+        tag.putInt("running", this.running);
+        for(int x = 0; x < this.imageWidth; x++){
+            for(int y = 0; y < this.imageHeight; y++){
+                tag.putInt(x+"-"+y, this.image.getRGB(x, y));
+            }
+        }
     }
     @Override
     public void load(CompoundTag tag) {
@@ -38,6 +84,21 @@ public class VideoPlayerBlockEntity extends BlockEntity{
         this.imageHeight = tag.getInt("imageHeight");
         this.frames = tag.getInt("frames");
         this.running = tag.getInt("running");
-
+        this.pixels = new int[this.imageWidth][this.imageHeight];
+        for(int x = 0; x < this.imageWidth; x++){
+            for(int y = 0; y < this.imageHeight; y++){
+                this.pixels[x][y] = tag.getInt(x+"-"+y);
+            }
+        }
+    }
+    @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        return tag;
+    }
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

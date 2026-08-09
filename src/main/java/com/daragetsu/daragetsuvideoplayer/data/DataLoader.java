@@ -21,6 +21,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 
 public class DataLoader extends SimpleJsonResourceReloadListener{
     private static final Gson GSON = new GsonBuilder().create();
+    public static Map<String, ArrayList<String>> files = new HashMap<>();
 
     public DataLoader() {
         super(GSON, "videos");
@@ -68,7 +69,7 @@ public class DataLoader extends SimpleJsonResourceReloadListener{
             for(int i : keys){
                 ff.add(map.get(i));
             }
-            Global.files.put(data.name(), ff);
+            DataLoader.files.put(data.name(), ff);
         }
     }
 }
