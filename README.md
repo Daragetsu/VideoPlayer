@@ -18,3 +18,5 @@ to add a new video:
 path example: Downloads/video.mp4 if the video is in your Downloads folder
 
 * if you're on singleplayer, add it to your world as usual, if you're on server, put the data pack on the server world(players do not need to add the data pack or have the video, they only need to have the mod installed)
+
+### clicking the block with a stick renamed to the name of the video changes the current playing video to that video, instead of having to change through every video
