@@ -20,3 +20,5 @@ path example: Downloads/video.mp4 if the video is in your Downloads folder
 * add datapack to world
 
 ### clicking the block with a stick renamed to the name of the video changes the current playing video to that video, instead of having to change through every video
+
+*this mod is probably the most amount of technical debt I have created*

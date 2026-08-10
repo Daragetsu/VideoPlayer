@@ -38,16 +38,19 @@ public class DataLoader extends SimpleJsonResourceReloadListener{
             Data data = GSON.fromJson(element, Data.class);
             File folder = new File(main, "frames");
             File f = new File(folder, data.name());
+            File out = null;
             if(!f.exists()){
                 File file = new File(System.getProperty("user.home"), data.location());
                 f.mkdirs();
                 if(file.exists() && file.isFile()){
                     try {
+                        out = changeVideoFramerate(file, f);
                         ProcessBuilder builder = new ProcessBuilder(
                             "ffmpeg",
-                            "-i", file.getAbsolutePath(),
+                            "-i", out.getAbsolutePath(),
                             "-vsync", "0",
-                            f.getAbsolutePath() + "/%01d_" + file.getName() + ".png"
+                            "-vf", "scale=-1:260",
+                            f.getAbsolutePath() + "/%01d_" + out.getName() + ".png"
                         );
                         builder.redirectErrorStream(true);
                         Process p = builder.start();
@@ -61,11 +64,53 @@ public class DataLoader extends SimpleJsonResourceReloadListener{
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    if(
+                        getMimeType(out).equalsIgnoreCase("mp4") ||
+                        getMimeType(out).equalsIgnoreCase("mov") ||
+                        getMimeType(out).equalsIgnoreCase("webm") ||
+                        getMimeType(out).equalsIgnoreCase("avi") ||
+                        getMimeType(out).equalsIgnoreCase("qt") ||
+                        getMimeType(out).equalsIgnoreCase("mpeg") ||
+                        getMimeType(out).equalsIgnoreCase("mpg") ||
+                        getMimeType(out).equalsIgnoreCase("wmv") ||
+                        getMimeType(out).equalsIgnoreCase("flv") ||
+                        getMimeType(out).equalsIgnoreCase("mkv") ||
+                        getMimeType(out).equalsIgnoreCase("3gp") ||
+                        getMimeType(out).equalsIgnoreCase("3g2")
+                    ){
+                        try {
+                            ProcessBuilder builder = new ProcessBuilder(
+                                "ffmpeg",
+                                "-i",
+                                out.getAbsolutePath(),
+                                "-q:a",
+                                "0",
+                                "-map",
+                                "0:a",
+                                f.getAbsolutePath() + "\\" + data.name() + ".mp3"
+                            );
+                            builder.redirectErrorStream(true);
+                            Process p = builder.start();
+                            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                            String line;
+                            while (true) {
+                                line = r.readLine();
+                                if (line == null) { break; }
+                                System.out.println(line);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(out!=null){
+                        out.delete();
+                    }
                 }
             }
             ArrayList<String> ff = new ArrayList<>();
             Map<Integer, String> map = new HashMap<>();
             for(String fileName : f.list()){
+                if(fileName.contains(".mp3"))continue;
                 map.put(Integer.parseInt(fileName.substring(0, fileName.indexOf('_', 0))), fileName);
             }
             SortedSet<Integer> keys = new TreeSet<>(map.keySet());
@@ -74,5 +119,33 @@ public class DataLoader extends SimpleJsonResourceReloadListener{
             }
             DataLoader.files.put(data.name(), ff);
         }
+    }
+    private static String getMimeType(File file) {
+        return file.getName().substring(file.getName().lastIndexOf(".")+1, file.getName().length());
+    }
+    private static File changeVideoFramerate(File file, File folder){
+        File output = new File(folder, file.getName()+"_out.mp4");
+        try {
+            ProcessBuilder builder = new ProcessBuilder(
+                "ffmpeg",
+                "-i",
+                file.getAbsolutePath(),
+                "-filter:v",
+                "fps=20",
+                output.getAbsolutePath()
+            );
+            builder.redirectErrorStream(true);
+            Process p = builder.start();
+            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            while (true) {
+                line = r.readLine();
+                if (line == null) { break; }
+                System.out.println(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return output;
     }
 }

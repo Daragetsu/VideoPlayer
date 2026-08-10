@@ -161,9 +161,23 @@ public class VideoPlayerBlock extends BaseEntityBlock{
                     blockEntity.running++;
                 }
                 blockEntity.frames = 0;
+                blockEntity.playingSound = false;
+                if(blockEntity.thr.isAlive()){
+                    blockEntity.thr.interrupt();
+                    if(blockEntity.process.isAlive()){
+                        blockEntity.process.destroy();
+                    }
+                }
             }else{
                 blockEntity.running = blockEntity.runnables.indexOf(toChangeTo);
                 blockEntity.frames = 0;
+                blockEntity.playingSound = false;
+                if(blockEntity.thr.isAlive()){
+                    blockEntity.thr.interrupt();
+                    if(blockEntity.process.isAlive()){
+                        blockEntity.process.destroy();
+                    }
+                }
             }
         }
         player.sendSystemMessage(Component.literal("Switched to: "+blockEntity.runnables.get(blockEntity.running)));
