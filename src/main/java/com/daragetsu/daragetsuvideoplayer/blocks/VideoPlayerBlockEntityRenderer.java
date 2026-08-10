@@ -22,41 +22,61 @@ public class VideoPlayerBlockEntityRenderer implements BlockEntityRenderer<Video
         VertexConsumer vc = bufferSource.getBuffer(RenderType.debugQuads());
         stack.pushPose();
         Direction facing = block.getBlockState().getValue(VideoPlayerBlock.FACING);
-        if(facing.equals(Direction.NORTH)){
-            stack.translate(1D, 1D, 0.5D);
-            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
-            stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180.0F));
-        }
-        if(facing.equals(Direction.SOUTH)){
-            stack.translate(0D, 1D, 0.5D);
-            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-180.0F));
-        }
-        if(facing.equals(Direction.EAST)){
-            stack.translate(0.5D, 1D, 1D);
-            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
-            stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270.0F));
-        }
-        if(facing.equals(Direction.WEST)){
-            stack.translate(0.5D, 1D, 0D);
-            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
-            stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90.0F));
-        }
-        if(facing.equals(Direction.UP)){
-            stack.translate(0D, 0.5D, 0D);
-            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90.0F));
-        }
-        if(facing.equals(Direction.DOWN)){
-            stack.translate(0D, 0.5D, 1D);
-            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-90.0F));
+        if(block.getBlockState().getValue(VideoPlayerBlock.IS_WIDE)){
+            if(facing.equals(Direction.NORTH)){
+                stack.translate(1D, 1D, 0.5D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+                stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180.0F));
+            }else if(facing.equals(Direction.SOUTH)){
+                stack.translate(0D, 1D, 0.5D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-180.0F));
+            }else if(facing.equals(Direction.EAST)){
+                stack.translate(0.5D, 1D, 1D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+                stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270.0F));
+            }else if(facing.equals(Direction.WEST)){
+                stack.translate(0.5D, 1D, 0D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+                stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90.0F));
+            } else if(facing.equals(Direction.UP)){
+                stack.translate(0D, 0.5D, 0D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90.0F));
+            } else if(facing.equals(Direction.DOWN)){
+                stack.translate(0D, 0.5D, 1D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-90.0F));
+            }
+        }else{
+            if(facing.equals(Direction.NORTH)){
+                stack.translate(0.785D, 1D, 0.5D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+                stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180.0F));
+            }else if(facing.equals(Direction.SOUTH)){
+                stack.translate(0.22D, 1D, 0.5D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-180.0F));
+            }else if(facing.equals(Direction.EAST)){
+                stack.translate(0.5D, 1D, 0.785D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+                stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270.0F));
+            }else if(facing.equals(Direction.WEST)){
+                stack.translate(0.5D, 1D, 0.22D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(180.0F));
+                stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90.0F));
+            } else if(facing.equals(Direction.UP)){
+                stack.translate(0.22D, 0.5D, 0D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90.0F));
+            } else if(facing.equals(Direction.DOWN)){
+                stack.translate(0.22D, 0.5D, 1D);
+                stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-90.0F));
+            }
         }
         Matrix4f m = stack.last().pose();
         for (int x = 0; x < block.imageWidth; x++) {
             for (int y = 0; y < block.imageHeight; y++) {
                 Color color = new Color(block.pixels[x][y], true);
-                float px = (float) (x / (float) block.imageWidth);
-                float py = (float) (y / (float) block.imageHeight);
-                float width = (float) (1.0f / block.imageWidth);
-                float height = (float) (1.0f / block.imageHeight);
+                float px = ((float)x / block.imageWidth) * block.max;
+                float py = (float)y / block.imageHeight;
+                float width = (1f * block.max) / block.imageWidth;
+                float height = 1f / block.imageHeight;
                 vc.vertex(m, px, py, 0)
                     .color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha())
                     .endVertex();

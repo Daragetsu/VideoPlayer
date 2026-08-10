@@ -29,6 +29,7 @@ public class VideoPlayerBlockEntity extends BlockEntity{
     public volatile boolean playingSound = false;
     public Thread thr = new Thread();
     public volatile Process process;
+    public float max = 1;
     public VideoPlayerBlockEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(ModBlockEntities.VIDEO_PLAYER_BLOCK_ENTITY.get(), p_155229_, p_155230_);
     }
@@ -104,7 +105,15 @@ public class VideoPlayerBlockEntity extends BlockEntity{
             }
         }
         blockEntity.setChanged();
-        level.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
+        if(((float)((float)blockEntity.imageHeight/(float)blockEntity.imageWidth))>1.6){
+            level.setBlock(pos, state.setValue(VideoPlayerBlock.IS_WIDE, false), 3);
+            level.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState().setValue(VideoPlayerBlock.IS_WIDE, false), 3);
+            blockEntity.max = 0.56f;
+        }else{
+            level.setBlock(pos, state.setValue(VideoPlayerBlock.IS_WIDE, true), 3);
+            level.sendBlockUpdated(pos, blockEntity.getBlockState(), blockEntity.getBlockState().setValue(VideoPlayerBlock.IS_WIDE, true), 3);
+            blockEntity.max = ((float)((float)blockEntity.imageWidth/(float)blockEntity.imageHeight));
+        }
     }
 
     @Override
@@ -115,6 +124,7 @@ public class VideoPlayerBlockEntity extends BlockEntity{
         tag.putInt("frames", this.frames);
         tag.putInt("running", this.running);
         tag.putBoolean("playingSound", this.playingSound);
+        tag.putFloat("max", this.max);
         for(int x = 0; x < this.imageWidth; x++){
             for(int y = 0; y < this.imageHeight; y++){
                 tag.putInt(x+"-"+y, this.image.getRGB(x, y));
@@ -129,6 +139,7 @@ public class VideoPlayerBlockEntity extends BlockEntity{
         this.frames = tag.getInt("frames");
         this.running = tag.getInt("running");
         this.playingSound = tag.getBoolean("playingSound");
+        this.max = tag.getFloat("max");
         this.pixels = new int[this.imageWidth][this.imageHeight];
         for(int x = 0; x < this.imageWidth; x++){
             for(int y = 0; y < this.imageHeight; y++){

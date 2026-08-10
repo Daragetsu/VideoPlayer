@@ -1,5 +1,8 @@
 package com.daragetsu.daragetsuvideoplayer.blocks;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Nullable;
 
 import com.daragetsu.daragetsuvideoplayer.data.DataLoader;
@@ -15,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -31,20 +35,122 @@ import net.minecraft.world.level.block.state.StateDefinition.Builder;
 
 public class VideoPlayerBlock extends BaseEntityBlock{
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
+    Map<Direction, VoxelShape> landscapeShape = new HashMap<>(Map.of(
+        Direction.NORTH, Block.box(
+                0, 
+                0, 
+                8, 
+                16, 
+                16, 
+                16
+            ),
+        Direction.SOUTH, Block.box(
+                0, 
+                0, 
+                0, 
+                16, 
+                16, 
+                8
+            ),
+        Direction.EAST, Block.box(
+                0, 
+                0, 
+                0, 
+                8, 
+                16, 
+                16
+            ),
+        Direction.WEST, Block.box(
+                8, 
+                0, 
+                0, 
+                16, 
+                16, 
+                16
+            ),
+        Direction.UP, Block.box(
+                0, 
+                0, 
+                0, 
+                16, 
+                8, 
+                16
+            ),
+        Direction.DOWN, Block.box(
+                0, 
+                8, 
+                0, 
+                16, 
+                16, 
+                16
+            )
+    ));
+    Map<Direction, VoxelShape> portraitShape = new HashMap<>(Map.of(
+        Direction.NORTH, Block.box(
+                3.5, 
+                0, 
+                8, 
+                12.5, 
+                16, 
+                16
+            ),
+        Direction.SOUTH, Block.box(
+                3.5, 
+                0, 
+                0, 
+                12.5, 
+                16, 
+                8
+            ),
+        Direction.EAST, Block.box(
+                0, 
+                0, 
+                3.5, 
+                8, 
+                16, 
+                12.5
+            ),
+        Direction.WEST, Block.box(
+                8, 
+                0, 
+                3.5, 
+                16, 
+                16, 
+                12.5
+            ),
+        Direction.UP, Block.box(
+                3.5, 
+                0, 
+                0, 
+                12.5, 
+                8, 
+                16
+            ),
+        Direction.DOWN, Block.box(
+                3.5, 
+                8, 
+                0, 
+                12.5, 
+                16, 
+                16
+            )
+    ));
+    public static final BooleanProperty IS_WIDE = BooleanProperty.create("is_wide");
 
     public VideoPlayerBlock(Properties p_49795_) {
         super(p_49795_);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(IS_WIDE, true));
     }
 
     @Override
     protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
         builder.add(FACING);
+        builder.add(IS_WIDE);
     }
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite()).setValue(IS_WIDE, true);
     }
     
     public static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
@@ -66,76 +172,12 @@ public class VideoPlayerBlock extends BaseEntityBlock{
     }
 
     @Override
-    public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_,
-            CollisionContext p_60558_) {
-        Direction facing = p_60555_.getValue(VideoPlayerBlock.FACING);
-        VoxelShape shape = Block.box(
-            0, 
-            0, 
-            0, 
-            16, 
-            16, 
-            16
-        );
-        if(facing.equals(Direction.NORTH)){
-            shape = Block.box(
-                0, 
-                0, 
-                8, 
-                16, 
-                16, 
-                16
-            );
-        }
-        if(facing.equals(Direction.SOUTH)){
-            shape = Block.box(
-                0, 
-                0, 
-                0, 
-                16, 
-                16, 
-                8
-            );
-        }
-        if(facing.equals(Direction.EAST)){
-            shape = Block.box(
-                0, 
-                0, 
-                0, 
-                8, 
-                16, 
-                16
-            );
-        }
-        if(facing.equals(Direction.WEST)){
-            shape = Block.box(
-                8, 
-                0, 
-                0, 
-                16, 
-                16, 
-                16
-            );
-        }
-        if(facing.equals(Direction.UP)){
-            shape = Block.box(
-                0, 
-                0, 
-                0, 
-                16, 
-                8, 
-                16
-            );
-        }
-        if(facing.equals(Direction.DOWN)){
-            shape = Block.box(
-                0, 
-                8, 
-                0, 
-                16, 
-                16, 
-                16
-            );
+    public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos pos,
+            CollisionContext context) {
+        Direction facing = state.getValue(VideoPlayerBlock.FACING);
+        VoxelShape shape = landscapeShape.get(facing);
+        if(!state.getValue(VideoPlayerBlock.IS_WIDE)){
+            shape = portraitShape.get(facing);
         }
         return shape;
     }
