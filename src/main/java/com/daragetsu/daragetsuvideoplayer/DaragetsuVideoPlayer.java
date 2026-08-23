@@ -3,6 +3,7 @@ package com.daragetsu.daragetsuvideoplayer;
 import com.daragetsu.daragetsuvideoplayer.blocks.ModBlockEntities;
 import com.daragetsu.daragetsuvideoplayer.blocks.ModBlocks;
 import com.daragetsu.daragetsuvideoplayer.blocks.VideoPlayerBlockEntityRenderer;
+import com.daragetsu.daragetsuvideoplayer.blocks.bigtv.PixelBlockEntityRenderer;
 import com.daragetsu.daragetsuvideoplayer.data.DataLoader;
 import com.daragetsu.daragetsuvideoplayer.items.ModItems;
 import com.mojang.logging.LogUtils;
@@ -52,6 +53,8 @@ public class DaragetsuVideoPlayer
     {
         if(event.getTabKey().equals(CreativeModeTabs.REDSTONE_BLOCKS)){
             event.accept(ModItems.VIDEO_PLAYER_BLOCK);
+            event.accept(ModItems.BIG_SCREEN_BLOCK);
+            event.accept(ModItems.PIXEL_BLOCK);
         }
     }
 
@@ -73,6 +76,10 @@ public class DaragetsuVideoPlayer
             event.registerBlockEntityRenderer(
                 ModBlockEntities.VIDEO_PLAYER_BLOCK_ENTITY.get(),
                 VideoPlayerBlockEntityRenderer::new
+            );
+            event.registerBlockEntityRenderer(
+                ModBlockEntities.PIXEL_BLOCK_ENTITY.get(),
+                PixelBlockEntityRenderer::new
             );
         }
     }

@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "daragetsuvideoplayer:block/video_player_block"
+        }
+    }
+}
