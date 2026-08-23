@@ -1,8 +1,6 @@
 package com.daragetsu.daragetsuvideoplayer.blocks.bigtv;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import java.awt.image.BufferedImage;
@@ -30,9 +28,6 @@ public class BigScreenBlockEntity extends BlockEntity{
     public int frames = 0;
     public int running = 0;
     public ArrayList<String> runnables = new ArrayList<>();
-    public volatile boolean playingSound = false;
-    public Thread thr = new Thread();
-    public volatile Process process;
     public BigScreenBlockEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(ModBlockEntities.BIG_SCREEN_BLOCK_ENTITY.get(), p_155229_, p_155230_);
     }
@@ -49,44 +44,6 @@ public class BigScreenBlockEntity extends BlockEntity{
         File main = level.getServer().getWorldPath(LevelResource.ROOT).toFile();
         File folf = new File(main, "frames");
         if(DataLoader.files.get(blockEntity.runnables.get(blockEntity.running))==null)return;
-        File fol = new File(folf, blockEntity.runnables.get(blockEntity.running));
-        File soundFIle = new File(fol, blockEntity.runnables.get(blockEntity.running)+".mp3");
-        if(!soundFIle.exists()){
-            blockEntity.playingSound = true;
-        }
-        if(!blockEntity.playingSound){
-            blockEntity.thr = new Thread(()->{
-                try {
-                    ProcessBuilder builder = new ProcessBuilder(
-                        "ffplay",
-                        "-nodisp",
-                        "-autoexit",
-                        "-fflags",
-                        "nobuffer",
-                        "-flags",
-                        "low_delay",
-                        "-analyzeduration",
-                        "0",
-                        "-probesize",
-                        "32",
-                        soundFIle.getAbsolutePath()
-                    );
-                    builder.redirectErrorStream(true);
-                    blockEntity.process = builder.start();
-                    BufferedReader r = new BufferedReader(new InputStreamReader(blockEntity.process.getInputStream()));
-                    String line;
-                    while (true) {
-                        line = r.readLine();
-                        if (line == null) { break; }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            blockEntity.thr.start();
-            blockEntity.playingSound = true;
-        }
-        if(!blockEntity.playingSound)return;
         if(blockEntity.frames>=DataLoader.files.get(blockEntity.runnables.get(blockEntity.running)).size()-1){
             blockEntity.frames = 0;
         }
@@ -132,7 +89,6 @@ public class BigScreenBlockEntity extends BlockEntity{
         tag.putInt("imageHeight", this.imageHeight);
         tag.putInt("frames", this.frames);
         tag.putInt("running", this.running);
-        tag.putBoolean("playingSound", this.playingSound);
     }
     @Override
     public void load(CompoundTag tag) {
@@ -141,7 +97,6 @@ public class BigScreenBlockEntity extends BlockEntity{
         this.imageHeight = tag.getInt("imageHeight");
         this.frames = tag.getInt("frames");
         this.running = tag.getInt("running");
-        this.playingSound = tag.getBoolean("playingSound");
     }
     @Override
     public CompoundTag getUpdateTag() {
@@ -156,8 +111,6 @@ public class BigScreenBlockEntity extends BlockEntity{
     @Override
     public void setRemoved() {
         if(!this.level.isClientSide()){
-            this.thr.interrupt();
-            this.process.destroy();
             AABB box = new AABB(
                 this.getBlockPos().getX(),
                 this.getBlockPos().getY()+1,

@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.daragetsu.daragetsuvideoplayer.DaragetsuVideoPlayer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -65,44 +64,6 @@ public class DataLoader extends SimpleJsonResourceReloadListener{
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if(
-                        getMimeType(out).equalsIgnoreCase("mp4") ||
-                        getMimeType(out).equalsIgnoreCase("mov") ||
-                        getMimeType(out).equalsIgnoreCase("webm") ||
-                        getMimeType(out).equalsIgnoreCase("avi") ||
-                        getMimeType(out).equalsIgnoreCase("qt") ||
-                        getMimeType(out).equalsIgnoreCase("mpeg") ||
-                        getMimeType(out).equalsIgnoreCase("mpg") ||
-                        getMimeType(out).equalsIgnoreCase("wmv") ||
-                        getMimeType(out).equalsIgnoreCase("flv") ||
-                        getMimeType(out).equalsIgnoreCase("mkv") ||
-                        getMimeType(out).equalsIgnoreCase("3gp") ||
-                        getMimeType(out).equalsIgnoreCase("3g2")
-                    ){
-                        try {
-                            ProcessBuilder builder = new ProcessBuilder(
-                                "ffmpeg",
-                                "-i",
-                                out.getAbsolutePath(),
-                                "-q:a",
-                                "0",
-                                "-map",
-                                "0:a",
-                                f.getAbsolutePath() + "\\" + data.name() + ".mp3"
-                            );
-                            builder.redirectErrorStream(true);
-                            Process p = builder.start();
-                            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                            String line;
-                            while (true) {
-                                line = r.readLine();
-                                if (line == null) { break; }
-                                System.out.println(line);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
                     if(out!=null){
                         out.delete();
                     }
@@ -120,9 +81,6 @@ public class DataLoader extends SimpleJsonResourceReloadListener{
             }
             DataLoader.files.put(data.name(), ff);
         }
-    }
-    private static String getMimeType(File file) {
-        return file.getName().substring(file.getName().lastIndexOf(".")+1, file.getName().length());
     }
     private static File changeVideoFramerate(File file, File folder){
         File output = new File(folder, file.getName()+"_out.mp4");
