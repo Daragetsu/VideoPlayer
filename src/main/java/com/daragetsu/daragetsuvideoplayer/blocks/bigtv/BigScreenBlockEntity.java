@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.LevelResource;
@@ -157,6 +158,20 @@ public class BigScreenBlockEntity extends BlockEntity{
         if(!this.level.isClientSide()){
             this.thr.interrupt();
             this.process.destroy();
+            AABB box = new AABB(
+                this.getBlockPos().getX(),
+                this.getBlockPos().getY()+1,
+                this.getBlockPos().getZ(),
+                this.getBlockPos().getX()+this.imageWidth,
+                this.getBlockPos().getY()+1,
+                this.getBlockPos().getZ()+this.imageHeight
+            );
+            for(double x = box.minX; x < box.maxX; x++){
+                for(double z = box.minZ; z < box.maxZ; z++){
+                    BlockPos pixelPos = new BlockPos((int)x,this.getBlockPos().getY()+1,(int)z);
+                    level.setBlock(new BlockPos(pixelPos), Blocks.AIR.defaultBlockState(), 3);
+                }
+            }
         }
         super.setRemoved();
     }
