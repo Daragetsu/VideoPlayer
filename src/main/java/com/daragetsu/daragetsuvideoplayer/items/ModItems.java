@@ -14,6 +14,8 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, DaragetsuVideoPlayer.MOD_ID);
 
     public static final RegistryObject<Item> VIDEO_PLAYER_BLOCK = ITEMS.register("video_player_block", ()->new BlockItem(ModBlocks.VIDEO_PLAYER_BLOCK.get(), new Item.Properties()));
+    
+    public static final RegistryObject<Item> BLOCK_TV_BLOCK = ITEMS.register("block_tv_block", ()->new BlockItem(ModBlocks.BLOCK_TV_BLOCK.get(), new Item.Properties()));
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);

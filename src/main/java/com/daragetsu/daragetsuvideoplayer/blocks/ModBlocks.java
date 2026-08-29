@@ -1,6 +1,7 @@
 package com.daragetsu.daragetsuvideoplayer.blocks;
 
 import com.daragetsu.daragetsuvideoplayer.DaragetsuVideoPlayer;
+import com.daragetsu.daragetsuvideoplayer.blocks.ConcretePlayer.ConcretePlayerBlock;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
@@ -14,6 +15,8 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, DaragetsuVideoPlayer.MOD_ID);
 
     public static final RegistryObject<VideoPlayerBlock> VIDEO_PLAYER_BLOCK = BLOCKS.register("video_player_block", ()->new VideoPlayerBlock(BlockBehaviour.Properties.copy(Blocks.END_STONE).noOcclusion()));
+    
+    public static final RegistryObject<ConcretePlayerBlock> BLOCK_TV_BLOCK = BLOCKS.register("block_tv_block", ()->new ConcretePlayerBlock(BlockBehaviour.Properties.copy(Blocks.END_STONE).noOcclusion()));
 
     public static void register(IEventBus eventBus){
         BLOCKS.register(eventBus);
